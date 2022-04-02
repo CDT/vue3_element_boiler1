@@ -37,7 +37,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
                             <div class="grid-content grid-con-1">
-                                <i class="el-icon-user-solid grid-con-icon"></i>
+                                <div class="grid-con-icon"><el-icon><user /></el-icon></div>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">1234</div>
                                     <div>用户访问量</div>
@@ -48,7 +48,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
                             <div class="grid-content grid-con-2">
-                                <i class="el-icon-message-solid grid-con-icon"></i>
+                                <div class="grid-con-icon"><el-icon><message /></el-icon></div>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">321</div>
                                     <div>系统消息</div>
@@ -59,7 +59,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
                             <div class="grid-content grid-con-3">
-                                <i class="el-icon-s-goods grid-con-icon"></i>
+                                <div class="grid-con-icon"><el-icon><goods /></el-icon></div>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">5000</div>
                                     <div>数量</div>
@@ -117,9 +117,10 @@
 <script>
 import Schart from "vue-schart";
 import { reactive } from "vue";
+import { User, Message, Goods } from "@element-plus/icons-vue"
 export default {
     name: "dashboard",
-    components: { Schart },
+    components: { Schart, User, Message, Goods },
     setup() {
         const name = localStorage.getItem("ms_username");
         const role = name === "admin" ? "超级管理员" : "普通用户";

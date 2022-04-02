@@ -4,25 +4,27 @@
             text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu :index="item.index" :key="item.index">
+                    <el-sub-menu :index="item.index" :key="item.index">
                         <template #title>
-                            <i :class="item.icon"></i>
+                            <el-icon><component :is="item.icon"></component></el-icon>
                             <span>{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+                            <el-sub-menu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
                                 <template #title>{{ subItem.title }}</template>
                                 <el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.index">
-                                    {{ threeItem.title }}</el-menu-item>
-                            </el-submenu>
-                            <el-menu-item v-else :index="subItem.index" :key="subItem.index">{{ subItem.title }}
+                                    {{ threeItem.title }}
+                                </el-menu-item>
+                            </el-sub-menu>
+                            <el-menu-item v-else :index="subItem.index" :key="subItem.index">
+                                {{ subItem.title }}
                             </el-menu-item>
                         </template>
-                    </el-submenu>
+                    </el-sub-menu>
                 </template>
                 <template v-else>
                     <el-menu-item :index="item.index" :key="item.index">
-                        <i :class="item.icon"></i>
+                        <el-icon><component :is="item.icon"></component></el-icon>
                         <template #title>{{ item.title }}</template>
                     </el-menu-item>
                 </template>
@@ -35,26 +37,28 @@
 import { computed, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+import { HomeFilled, Grid, CopyDocument, Calendar, Food, PieChart, Warning, Money, ColdDrink, MapLocation } from "@element-plus/icons-vue"
 export default {
+    components: { HomeFilled, Grid, CopyDocument, Calendar, Food, PieChart, Warning, Money, ColdDrink, MapLocation },
     setup() {
         const items = [
             {
-                icon: "el-icon-lx-home",
+                icon: HomeFilled,
                 index: "/dashboard",
                 title: "系统首页",
             },
             {
-                icon: "el-icon-lx-cascades",
+                icon: Grid,
                 index: "/table",
                 title: "基础表格",
             },
             {
-                icon: "el-icon-lx-copy",
+                icon: CopyDocument,
                 index: "/tabs",
                 title: "tab选项卡",
             },
             {
-                icon: "el-icon-lx-calendar",
+                icon: Calendar,
                 index: "3",
                 title: "表单相关",
                 subs: [
@@ -79,22 +83,22 @@ export default {
                 ],
             },
             {
-                icon: "el-icon-lx-emoji",
+                icon: ColdDrink,
                 index: "/icon",
                 title: "自定义图标",
             },
             {
-                icon: "el-icon-pie-chart",
+                icon: PieChart,
                 index: "/charts",
                 title: "schart图表",
             },
             {
-                icon: "el-icon-lx-global",
+                icon: MapLocation,
                 index: "/i18n",
                 title: "国际化功能",
             },
             {
-                icon: "el-icon-lx-warn",
+                icon: Warning,
                 index: "7",
                 title: "错误处理",
                 subs: [
@@ -109,7 +113,7 @@ export default {
                 ],
             },
             {
-                icon: "el-icon-lx-redpacket_fill",
+                icon: Money,
                 index: "/donate",
                 title: "支持作者",
             },
