@@ -67,7 +67,8 @@ export default {
         const router = useRouter();
         const handleCommand = (command) => {
             if (command == "loginout") {
-                localStorage.removeItem("ms_username");
+                localStorage.removeItem("ms_username")
+                localStorage.removeItem("access_token")
                 router.push("/login");
             } else if (command == "user") {
                 router.push("/user");

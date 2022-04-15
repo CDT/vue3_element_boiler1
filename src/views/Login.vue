@@ -2,7 +2,7 @@
     <div class="login-wrap">
         <div class="ms-login">
             <div class="ms-title">{{ $config.system_title }}</div>
-            <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
+            <el-form :model="param" :rules="rules" ref="loginForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
                     <el-input v-model="param.username" placeholder="username">
                         <template #prepend>
@@ -21,63 +21,69 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm()">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
+                <p class="login-tips">Tips : admin/86915998cdt</p>
             </el-form>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ref, reactive } from "vue"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
+import { ElMessage } from "element-plus"
+import { login } from '../api'
 
 export default {
     setup() {
-        const router = useRouter();
+        const router = useRouter()
         const param = reactive({
-            username: "admin",
-            password: "123123",
-        });
+            username: "300803",
+            password: "123456",
+        })
 
         const rules = {
             username: [
-                {
-                    required: true,
-                    message: "请输入用户名",
-                    trigger: "blur",
-                },
+                { required: true, message: "请输入用户名", trigger: "blur" },
             ],
             password: [
-                { required: true, message: "请输入密码", trigger: "blur" },
-            ],
-        };
-        const login = ref(null);
+                { required: true, message: "请输入密码", trigger: "blur" }
+            ]
+        }
+        const loginForm = ref(null)
         const submitForm = () => {
-            login.value.validate((valid) => {
+            loginForm.value.validate((valid) => {
                 if (valid) {
-                    ElMessage.success("登录成功");
-                    localStorage.setItem("ms_username", param.username);
-                    router.push("/");
+                    login(param).then(resp => {
+                        ElMessage.success("登录成功")
+                        localStorage.setItem("ms_username", param.username)
+                        localStorage.setItem("ms_role", "normal") // TODO 暂无权限控制，写死普通权限
+                        localStorage.setItem('access_token', resp.data.token)
+                        router.push("/")
+                    }).catch(e => {
+                        if (e) {
+                            const errorMessage = (e.response && e.response.data.message) || e.message
+                            ElMessage.error(errorMessage)
+                            return false
+                        }
+                    })
                 } else {
-                    ElMessage.error("登录成功");
-                    return false;
+                    return false
                 }
-            });
-        };
+            })
+        }
 
-        const store = useStore();
-        store.commit("clearTags");
+        const store = useStore()
+        store.commit("clearTags")
 
         return {
             param,
             rules,
-            login,
+            loginForm,
             submitForm,
-        };
-    },
-};
+        }
+    }
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from "vue-router"
 import Home from "../views/Home.vue"
-import { config } from '../utils/config'
+import { SYSTEM_TITLE } from '../config'
 
 const routes = [
     {
@@ -15,42 +15,48 @@ const routes = [
                 path: "/dashboard",
                 name: "dashboard",
                 meta: {
-                    title: '系统首页'
+                    title: '系统首页',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
             }, {
                 path: "/table",
                 name: "basetable",
                 meta: {
-                    title: '表格'
+                    title: '表格',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/BaseTable.vue")
             }, {
                 path: "/charts",
                 name: "basecharts",
                 meta: {
-                    title: '图表'
+                    title: '图表',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
             }, {
                 path: "/form",
                 name: "baseform",
                 meta: {
-                    title: '表单'
+                    title: '表单',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "form" */ "../views/BaseForm.vue")
             }, {
                 path: "/tabs",
                 name: "tabs",
                 meta: {
-                    title: 'tab标签'
+                    title: 'tab标签',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
             }, {
                 path: "/donate",
                 name: "donate",
                 meta: {
-                    title: '鼓励作者'
+                    title: '鼓励作者',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "donate" */ "../views/Donate.vue")
             }, {
@@ -58,28 +64,31 @@ const routes = [
                 name: "permission",
                 meta: {
                     title: '权限管理',
-                    permission: true
+                    permission: ['admin']
                 },
                 component: () => import ( /* webpackChunkName: "permission" */ "../views/Permission.vue")
             }, {
                 path: "/i18n",
                 name: "i18n",
                 meta: {
-                    title: '国际化语言'
+                    title: '国际化语言',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "i18n" */ "../views/I18n.vue")
             }, {
                 path: "/upload",
                 name: "upload",
                 meta: {
-                    title: '上传插件'
+                    title: '上传插件',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "upload" */ "../views/Upload.vue")
             }, {
                 path: "/icon",
                 name: "icon",
                 meta: {
-                    title: '自定义图标'
+                    title: '自定义图标',
+                    permission: ['normal']
                 },
                 component: () => import ( /* webpackChunkName: "icon" */ "../views/Icon.vue")
             }, {
@@ -100,14 +109,16 @@ const routes = [
                 path: '/user',
                 name: 'user',
                 meta: {
-                    title: '个人中心'
+                    title: '个人中心',
+                    permission: ['normal']
                 },
                 component: () => import (/* webpackChunkName: "user" */ '../views/User.vue')
             }, {
                 path: '/editor',
                 name: 'editor',
                 meta: {
-                    title: '富文本编辑器'
+                    title: '富文本编辑器',
+                    permission: ['normal']
                 },
                 component: () => import (/* webpackChunkName: "editor" */ '../views/Editor.vue')
             }
@@ -127,20 +138,33 @@ const router = createRouter({
     routes
 });
 
-// 权限管理（模拟）
+// 权限管理
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | ${config.system_title}`;
-    const role = localStorage.getItem('ms_username');
+    document.title = `${to.meta.title} | ${SYSTEM_TITLE}`;
+    const role = localStorage.getItem('ms_role');
+    /* // 这个感觉不需要：
     if (!role && to.path !== '/login') {
-        next('/login');
-    } else if (to.meta.permission) {
-        // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-        role === 'admin'
-            ? next()
-            : next('/403');
+        next('/login')    
+    } else */ if (to.meta.permission) { // 需要验证权限
+        // 有权限则通过，无权限则跳转403
+        to.meta.permission.includes(role) ? next() : next('/403');
     } else {
-        next();
+        next()
     }
-});
+})
 
-export default router;
+// token检验
+router.beforeEach((to, from, next) => {
+    if (to.path === '/login') {
+        next()
+    } else {
+        let token = localStorage.getItem('access_token')
+        if (!token) {
+            next('/login')
+        } else {
+            next()
+        }
+    }
+})
+
+export default router
